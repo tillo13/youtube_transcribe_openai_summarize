@@ -1,8 +1,7 @@
-#2023-Aug-25 testing github copilot on a use case
+#2023-Aug-25 
+#testing github copilot on a use case: https://en.wikipedia.org/wiki/GitHub_Copilot
 #using https://pypi.org/project/youtube-transcript-api/
 
-#pip install youtube_transcript_api
-#pip install youtube_transcript_api --upgrade
 
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
