@@ -6,12 +6,14 @@
 
 
 from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api._errors import TranscriptsDisabled
+from youtube_transcript_api._errors import TranscriptsDisabled, YouTubeRequestFailed
+import time
 from urllib.parse import urlparse, parse_qs
 
 #enter a url of the youtube video you want to transcribe 
-URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts
-URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=51TpMIEyUxk" ##no transcripts test
+#URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts in song
+URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=BtpDojXVSO8" # has transcripts in story
+#URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=51TpMIEyUxk" ##no transcripts test
 
 def get_video_id(video_url):
     parsed_url = urlparse(video_url)
@@ -32,6 +34,24 @@ def get_transcript_and_metadata(video_url, language_codes=['en']):
 
     if video_id is None:
         raise Exception(f"Could not parse video URL: {video_url}")
+    
+    attempts = 0
+    while attempts < 3:  # you may adjust the number of attempts
+        try:
+            transcripts = YouTubeTranscriptApi.get_transcript(video_id)
+            break
+        except TranscriptsDisabled:
+            print(f"Transcription is disabled for the video: {video_url}")
+            print("Please choose another video where transcription is enabled.")
+            return None, None
+        except YouTubeRequestFailed:
+            attempts += 1
+            print(f"Request to YouTube failed. Attempt: {attempts}. Retrying...")
+            time.sleep(5)  # wait for 5 seconds before retrying
+
+    if attempts == 3:  # all attempts failed
+        print("Could not retrieve the transcript. Please try again later.")
+        return None, None
 
     try:
         transcripts = YouTubeTranscriptApi.get_transcript(video_id)
@@ -59,10 +79,12 @@ def get_transcript_and_metadata(video_url, language_codes=['en']):
             'is_generated': is_generated,
             'is_translatable': is_translatable,
             'translatable_to_spanish': translatable_to_spanish,
-            'translatable_to_japanese': translatable_to_japanese
+            'translatable_to_japanese': translatable_to_japanese,
+            'transcripts': transcripts  # added this line
         }
 
     return transcribed_text, metadata
+
 
 if __name__ == "__main__":
     transcribed_text, metadata = get_transcript_and_metadata(URL_OF_YOUTUBE_VIDEO)
@@ -70,5 +92,23 @@ if __name__ == "__main__":
     print("Original Text:")
     print(transcribed_text)
 
-    print("\nMetadata:")
+    print("\nMetadata:") 
     print(metadata)
+
+    # New code to use timestamps
+    transcripts = metadata['transcripts']  # change this line
+
+    print("\nTimestamps:")
+    for segment in transcripts:
+        print(f"Text: {segment['text']}")
+        print(f"Start: {segment['start']} seconds")
+        print(f"Duration: {segment['duration']} seconds")
+        print()
+
+    # Filtering part as per asked timestamps
+    start = 30  
+    end = 60
+    filtered = [seg for seg in transcripts if seg['start'] >= start and seg['start'] + seg['duration'] <= end]
+    print(f"\nTranscript from {start} to {end} seconds:")
+    for seg in filtered:
+        print(seg['text'])
