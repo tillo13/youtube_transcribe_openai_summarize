@@ -1,13 +1,17 @@
 #2023-Aug-25 
 #testing github copilot on a use case: https://en.wikipedia.org/wiki/GitHub_Copilot
 #using https://pypi.org/project/youtube-transcript-api/
+#filename: ingest_youtube.py
+#github https://github.com/tillo13/youtube_transcribe_openai_summarize
 
 
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled
 from urllib.parse import urlparse, parse_qs
 
 #enter a url of the youtube video you want to transcribe 
-URL_OF_YOUTUBE_VIDEO = "https://youtu.be/fXDwpbP8Kvg"
+URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts
+URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=51TpMIEyUxk" ##no transcripts test
 
 def get_video_id(video_url):
     parsed_url = urlparse(video_url)
@@ -29,7 +33,13 @@ def get_transcript_and_metadata(video_url, language_codes=['en']):
     if video_id is None:
         raise Exception(f"Could not parse video URL: {video_url}")
 
-    transcripts = YouTubeTranscriptApi.get_transcript(video_id)
+    try:
+        transcripts = YouTubeTranscriptApi.get_transcript(video_id)
+    except TranscriptsDisabled:
+        print(f"Transcription is disabled for the video: {video_url}")
+        print("Please choose another video where transcription is enabled.")
+        return None, None
+
     transcribed_text = " ".join([caption['text'] for caption in transcripts])
 
     # Getting the list of all available transcripts
