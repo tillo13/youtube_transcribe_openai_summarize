@@ -12,8 +12,8 @@ openai.api_key = OPENAI_API_KEY
 
 # Constants
 MODEL_CHOICES = ["gpt-3.5-turbo", "text-davinci-003"]
-DEFAULT_MODEL = "text-davinci-003"  
-#DEFAULT_MODEL = "gpt-3.5-turbo"  
+#DEFAULT_MODEL = "text-davinci-003"  
+DEFAULT_MODEL = "gpt-3.5-turbo"  
 SYSTEM_MESSAGE = "You are acutely aware of recognizing names of people in videos, places they mention and things they describe.  Your job is to summarize youtube transcripts using bullet points to call out key data points"
 MAX_TOKENS_RESPONSE = 500
 MAX_TOKENS_SUMMARY = 500
