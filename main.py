@@ -9,10 +9,11 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, YouTubeRequestFailed
 import time
 from urllib.parse import urlparse, parse_qs
+from openai_utils import get_summary_from_transcript
 
 #enter a url of the youtube video you want to transcribe 
-#URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts in song
-URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=BtpDojXVSO8" # has transcripts in story
+URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts in song
+#URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=BtpDojXVSO8" # has transcripts in story
 #URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=51TpMIEyUxk" ##no transcripts test
 
 def get_video_id(video_url):
@@ -95,8 +96,8 @@ if __name__ == "__main__":
     print("\nMetadata:") 
     print(metadata)
 
-    # New code to use timestamps
-    transcripts = metadata['transcripts']  # change this line
+    # New code to use timestamps:
+    transcripts = metadata['transcripts']
 
     print("\nTimestamps:")
     for segment in transcripts:
@@ -112,3 +113,10 @@ if __name__ == "__main__":
     print(f"\nTranscript from {start} to {end} seconds:")
     for seg in filtered:
         print(seg['text'])
+
+    # Now generate a summary of the full transcript using OpenAI
+    print("\nGenerating summary...")
+    summary, duration = get_summary_from_transcript(transcribed_text)
+    print("Summary:")
+    print(summary)
+    print(f"Generated in {duration} seconds.")
