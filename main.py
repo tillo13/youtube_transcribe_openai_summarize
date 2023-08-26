@@ -13,7 +13,7 @@ from openai_utils import get_summary_from_transcript
 
 #enter a url of the youtube video you want to transcribe 
 URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=iK4u95thQn0" # has transcripts in song
-URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=BtpDojXVSO8" # has transcripts in story
+URL_OF_YOUTUBE_VIDEO = "https://youtu.be/BtpDojXVSO8?si=lS_Q5DjZoQiEqMG4&t=6" # has transcripts in story
 #URL_OF_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=51TpMIEyUxk" ##no transcripts test
 
 def get_video_id(video_url):
